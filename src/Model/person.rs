@@ -3,8 +3,8 @@
 
 // Module: Model.Person
 // Helper module for the Person struct.
-
 use std::fmt;
+
 //import height
 use super::height::Height;
 
@@ -19,8 +19,9 @@ pub struct Person {
 }
 
 #[allow(dead_code)]
+//Allowing dead code so the compiler doesn't complain about the getters and setters not being used.
 impl Person {
-    fn new_empty() -> Person {
+    pub fn new_empty() -> Person {
         Person {
             first_name: "no".to_string(),
             last_name: "name".to_string(),
