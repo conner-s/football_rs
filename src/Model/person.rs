@@ -8,6 +8,7 @@ use std::fmt;
 //import height
 use super::height::Height;
 
+#[derive(Debug)]
 pub struct Person {
     first_name: String,
     last_name: String,
@@ -36,6 +37,14 @@ impl Person {
         Self { first_name, last_name, age, height, weight, hometown, high_school }
     }
 
+
+    pub fn as_mut(&mut self) -> &mut Self {
+        self
+    }
+
+    pub fn unwrap(&self) -> &Self {
+        self
+    }
     // Getters and Setters
 
     pub fn first_name(&self) -> &str {

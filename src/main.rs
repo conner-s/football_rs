@@ -1,3 +1,9 @@
+//Conner Smith 2023
+//Porting of IST 242 Project to Rust
+//If Penn State gets mad about this, uhhh I'll take it down I guess.
+//
+
+//Data structures and traits
 mod model;
 mod traits;
 
@@ -6,46 +12,36 @@ use model::height::Height;
 use model::football_player::FootballPlayer;
 use crate::traits::table_member_traits::TableMemberTraits;
 
-use std::{error::Error, io};
-use tui::{
-    backend::{Backend, CrosstermBackend},
-    Terminal,
-};
-use crossterm::{
-    event::{DisableMouseCapture, EnableMouseCapture},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
+
+//TUI stuff
+use std::{error::Error, time::Duration};
+
+use argh::FromArgs;
+use crate::model::football_player::FootballPlayerData;
+use crate::traits::table_data_traits::TableDataTraits;
 
 mod app;
+mod crossterm;
 mod ui;
-mod input;
 
-use app::App;
-use ui::run_ui;
+/// Demo
+#[derive(Debug, FromArgs)]
+struct Cli {
+    /// time in ms between two ticks.
+    #[argh(option, default = "250")]
+    tick_rate: u64,
+    /// whether unicode symbols are used to improve the overall look of the app
+    #[argh(option, default = "true")]
+    enhanced_graphics: bool,
+}
 
 fn main() -> Result<(), Box<dyn Error>> {
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let cli: Cli = argh::from_env();
+    let tick_rate = Duration::from_millis(cli.tick_rate);
 
-    let app = App::new();
-    let res = run_ui(&mut terminal, app);
+    crossterm::run(tick_rate, cli.enhanced_graphics)?;
 
-    disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen,
-        DisableMouseCapture
-    )?;
-    terminal.show_cursor()?;
-
-    if let Err(err) = res {
-        println!("{:?}", err)
-    }
-
+    debug_objects();
     Ok(())
 }
 
@@ -56,8 +52,12 @@ fn debug_objects() {
     println!("Hello, world!");
     println!("Person: {}", person.to_string());
     let football_player = FootballPlayer::new(person, 0, "QB".to_string());
-
     let test = football_player.get_attributes();
     println!("Football Player: {}", football_player.to_string());
     println!("Football Player Attributes: {:?}", test);
+
+
+    let players = FootballPlayerData::new_empty();
+    let players = players.load_table_data();
+    println!("Football Player Data: {}", players[0]);
 }

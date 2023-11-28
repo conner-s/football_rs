@@ -1,12 +1,12 @@
 use std::fmt;
+
+#[derive(Debug)]
 pub(crate) struct Height {
     feet: u8,
     inches: u8,
 }
 #[allow(dead_code)]
 impl Height {
-
-
     // Constructors
     pub(crate) fn new(feet: u8, inches: u8) -> Height {
         Height {
